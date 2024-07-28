@@ -1,6 +1,6 @@
 # Warframe Relic Data Extractor
 
-This JS programs extracts the current prime rotation from the official loot tables and formats them in a readable markdown file.
+This JS program extracts the current prime rotation from the official loot tables and formats them in a readable markdown file.
 
 ## Requirements
 
