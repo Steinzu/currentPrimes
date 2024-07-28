@@ -4,7 +4,7 @@ This JS program extracts the current prime rotation from the official loot table
 
 ## Requirements
 
-- Node.js
+- Node.js 16+
 
 ## Setup
 
