@@ -1,0 +1,37 @@
+name: Generate Relics
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run script
+      run: node main.js
+
+    - name: Upload to Gist
+      env:
+        GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+      run: |
+        gist_id="97fa95b8aa24f469de096b17947dea1d"
+        content=$(cat currentPrimes.md)
+        curl -X PATCH -H "Authorization: token $GIST_TOKEN" \
+          -d "{\"files\": {\"currentPrimes.md\": {\"content\": \"$content\"}}}" \
+          https://api.github.com/gists/$gist_id
