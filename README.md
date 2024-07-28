@@ -31,4 +31,4 @@ This JS program extracts the current prime rotation from the official loot table
 
 2. The script will generate a `currentPrimes.md` file in the project directory containing the extracted data.
 
-Example output : https://gist.github.com/Steinzu/97fa95b8aa24f469de096b17947dea1d
+Example output : https://gist.github.com/Steinzu/f5103e7f00f38652757372a08a0f7025
