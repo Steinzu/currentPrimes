@@ -18,7 +18,7 @@ async function fetchAndParseHTML(url) {
 function findSubTableData(document, subTableTitle) {
     const tables = document.querySelectorAll('th');
     let targetTableStart = Array.from(tables).find(th => th.textContent.trim() === subTableTitle);
-    
+
     if (!targetTableStart) {
         console.error(`Subtable not found: ${subTableTitle}`);
         return [];
@@ -116,24 +116,42 @@ function cleanAndOrderRelics(relicsData) {
 
 // Function to extract complete primes
 function extractPrimes(relicData) {
-    let primesSet = new Set();
+    let primes = {};
 
     for (const relic in relicData) {
-        relicData[relic].forEach(({ item }) => {
+        relicData[relic].forEach(({ item, rarity }) => {
             if (!item.includes('Forma') && item.includes('Prime')) {
-                primesSet.add(item.split(' Prime')[0] + ' Prime');
+                const primeName = item.split(' Prime')[0] + ' Prime';
+                if (!primes[primeName]) {
+                    primes[primeName] = [];
+                }
+                primes[primeName].push({ item, rarity, source: relic });
             }
         });
     }
 
-    return Array.from(primesSet).sort();
+    return primes;
 }
 
 // Function to generate Markdown file
 function generateMarkdown(primes, relicData, relicLocations) {
     let markdown = '# Primes\n\n';
-    primes.forEach(prime => markdown += `- ${prime}\n`);
-    markdown += '\n';
+
+    // Sort primes alphabetically
+    const sortedPrimes = Object.keys(primes).sort();
+
+    sortedPrimes.forEach(prime => {
+        markdown += `- ${prime}\n`;
+        const sortedItems = primes[prime].sort((a, b) => {
+            const rarityOrder = ['Rare', 'Uncommon', 'Common'];
+            return rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+        });
+        sortedItems.forEach(({ item, rarity, source }) => {
+            markdown += `  - ${item} (${rarity}) -> ${source}\n`;
+        });
+    });
+
+    markdown += '\n# Relics\n\n';
 
     for (const relic in relicData) {
         markdown += `## ${relic}\n\n`;
@@ -160,6 +178,6 @@ extractSubTableData(url, subTableTitles).then(data => {
     const cleanRelics = cleanAndOrderRelics(data);
     const primes = extractPrimes(data);
     const markdownContent = generateMarkdown(primes, data, relicLocations);
-    fs.writeFileSync('currentPrime.md', markdownContent);
+    fs.writeFileSync('currentPrimes.md', markdownContent);
     console.log('Markdown file has been generated as currentPrimes.md');
 });
