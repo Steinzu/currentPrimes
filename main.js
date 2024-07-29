@@ -135,7 +135,13 @@ function extractPrimes(relicData) {
 
 // Function to generate Markdown file
 function generateMarkdown(primes, relicData, relicLocations) {
-    let markdown = '# Primes\n\n';
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    let markdown = `# Generated on ${currentDate}\n\n# Primes\n\n`;
 
     // Sort primes alphabetically
     const sortedPrimes = Object.keys(primes).sort();
